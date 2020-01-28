@@ -20,7 +20,7 @@ var port = process.env.PORT || 8080,
 // Here are some global config entries that change the behavior of the app
 // ======================================================================
 var buildNumber = 1;
-var minSleep = 500;
+var minSleep = 0;
 var requestCount = 0;
 var inProduction = false;
 var invokeRequestCount = 0;
@@ -78,7 +78,8 @@ var init = function(newBuildNumber) {
 
 	switch(buildNumber) {
 		case 2:
-			failInvokeRequestPercentage = 50;
+			failInvokeRequestPercentage = 0;
+			minSleep = 1000;
 			break;
 		case 4: 
 			if(inProduction) {
@@ -190,8 +191,8 @@ var server = http.createServer(async function (req, res) {
 
         // sleep a bit :-)
 		var sleeptime = parseInt(url.query["sleep"]);
-		if(sleeptime === 0) sleeptime = minSleep;
-		log(SEVERITY_DEBUG, "Sleeptime: " + sleeptime);
+		if(sleeptime === 0 || isNaN(sleeptime)) sleeptime = minSleep;
+		console.log( "Sleeptime: " + sleeptime);
 		sleep(sleeptime);
 
 		// figure out which API call they want to execute
